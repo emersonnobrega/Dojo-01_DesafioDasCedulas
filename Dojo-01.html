@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- Conteúdo -->
+    <input id="valor-a-pagar" type="text" placeholder="Digite uma frase"/>
+    <input id="valor-pago" type="text" placeholder="Digite uma frase"/>
+    <button onclick="calcular()">Calcular </button>
+</body>
+<script>
+
+    function calcular() {
+            debugger
+     const valorAPagarInput = document.querySelector('#valor-a-pagar').value
+     const valorPagoInput = document.querySelector('#valor-pago').value
+
+     try{
+        
+        let cedulas = [50,10,100,5,1];
+        let moedas = [0.50,0.10,0.05,0.01];
+        //Ordena o array de cedulas
+        cedulas.sort( function(a, b){
+                return b - a;
+        });
+            
+       const valorAPagarConvertido = parseFloat(valorAPagarInput);
+       const valorPagoConvertido = parseFloat(valorPagoInput);
+       let contadorValor = 0       
+
+       //Compara se valor pago é maior que o valor a ser pago
+       if (valorAPagarConvertido < valorPagoConvertido){
+           alert('O valor insuficiente!')
+           return
+        //Comparar se o valor é igual e não precisa de troc.
+       }else if(valorAPagarConvertido == valorPagoConvertido){
+           alert('Você não possui troco!')
+           return
+        }
+        //Começa a lógica da menor cedulas para troco
+    
+
+        //PARAMOS NESSE PASSO, PRECISAMOS AINDA CRIAR AS VÁRIAVES DE MOEDAS
+        cedulas = buscaCedulas(valorAPagarConvertido, valorPagoConvertido, cedulas)
+        console.log(cedulas)
+        moeda = buscaCedulas(moedaA, moedaB, moedas)
+        
+
+      }catch(e){
+      alert(e)
+    }
+}
+
+
+function buscaCedulas(valorAPagarConvertido, valorPagoConvertido, cedulasMoedas){
+        //Pega o troco a ser dado e usa como contador
+        contadorValor = valorAPagarConvertido - valorPagoConvertido  
+        let arrayCedulas = []
+        const i = 0;
+           while(i < contadorValor){
+            var cedulaEncontrada = cedulasMoedas.reduce(function(prev, curr) {
+                return (Math.abs(curr - contadorValor) < Math.abs(prev - contadorValor) ? curr : prev);
+            });
+            
+            //Verifica se a cédula a ser devolvida é menor que o troco, para buscar a próxima cedula menor
+             if(cedulaEncontrada > contadorValor){
+                cedulaEncontrada = cedulasMoedas.find(element => element < cedulaEncontrada);                
+             }
+             arrayCedulas.push(cedulaEncontrada);
+             contadorValor = contadorValor - cedulaEncontrada;
+           }        
+        //Monta objeto somando números de cedulas igualitárias            
+        let valorExibido = []
+        valorExibido = arrayCedulas.reduce(function( object , item ){  
+        debugger
+        if ( !object[item] ) {
+            object[item]=1;
+        } else {
+            object[item]++;
+        }
+        return object; 
+        },{})  
+        
+        return valorExibido
+        
+    }
+
+</script>
+
+</html>
