@@ -8,20 +8,20 @@
 
 <body>
     <!-- Conteúdo -->
-    <input id="valor-a-pagar" type="text" placeholder="Digite uma frase"/>
-    <input id="valor-pago" type="text" placeholder="Digite uma frase"/>
+    <input id="valor-a-pagar" value="100.20" type="text" placeholder="Digite uma frase"/>
+    <input id="valor-pago" value="20.78" type="text" placeholder="Digite uma frase"/>
     <button onclick="calcular()">Calcular </button>
 </body>
 <script>
 
     function calcular() {
-            debugger
+            
      const valorAPagarInput = document.querySelector('#valor-a-pagar').value
      const valorPagoInput = document.querySelector('#valor-pago').value
 
      try{
         
-        let cedulas = [50,10,100,5,1];
+        let cedulas = [50,10,100,90,5,1];
         let moedas = [0.50,0.10,0.05,0.01];
         //Ordena o array de cedulas
         cedulas.sort( function(a, b){
@@ -30,9 +30,7 @@
             
        const valorAPagarConvertido = parseFloat(valorAPagarInput);
        const valorPagoConvertido = parseFloat(valorPagoInput);
-       let contadorValor = 0       
 
-       //Compara se valor pago é maior que o valor a ser pago
        if (valorAPagarConvertido < valorPagoConvertido){
            alert('O valor insuficiente!')
            return
@@ -41,14 +39,29 @@
            alert('Você não possui troco!')
            return
         }
-        //Começa a lógica da menor cedulas para troco
     
+        //Começa a lógica da menor cedulas para troco
+       const troco = valorAPagarConvertido - valorPagoConvertido  
+
+       //valore Real
+       const valorCedulaTroco = Math.trunc(troco);
+
+       //valores Centavos
+        const valorMoedasTroco = obterCentavos(troco)
 
         //PARAMOS NESSE PASSO, PRECISAMOS AINDA CRIAR AS VÁRIAVES DE MOEDAS
-        cedulas = buscaCedulas(valorAPagarConvertido, valorPagoConvertido, cedulas)
-        console.log(cedulas)
-        moeda = buscaCedulas(moedaA, moedaB, moedas)
         
+        let cedulasTroco = buscaTroco(valorCedulaTroco, cedulas)
+        
+        let moedasTroco = buscaTroco(valorMoedasTroco, moedas)
+        
+        let trocoFinal = {
+            cedulas: cedulasTroco,
+            moedas: moedasTroco
+        }
+        
+
+        console.log(trocoFinal)
 
       }catch(e){
       alert(e)
@@ -56,27 +69,26 @@
 }
 
 
-function buscaCedulas(valorAPagarConvertido, valorPagoConvertido, cedulasMoedas){
-        //Pega o troco a ser dado e usa como contador
-        contadorValor = valorAPagarConvertido - valorPagoConvertido  
+function buscaTroco(troco, moedasCedulas){
+    
         let arrayCedulas = []
         const i = 0;
-           while(i < contadorValor){
-            var cedulaEncontrada = cedulasMoedas.reduce(function(prev, curr) {
-                return (Math.abs(curr - contadorValor) < Math.abs(prev - contadorValor) ? curr : prev);
+           while(i < troco){
+            var cedulaEncontrada = moedasCedulas.reduce(function(prev, curr) {
+                return (Math.abs(curr - troco) < Math.abs(prev - troco) ? curr : prev);
             });
             
             //Verifica se a cédula a ser devolvida é menor que o troco, para buscar a próxima cedula menor
-             if(cedulaEncontrada > contadorValor){
-                cedulaEncontrada = cedulasMoedas.find(element => element < cedulaEncontrada);                
+             if(cedulaEncontrada > troco){
+                cedulaEncontrada = moedasCedulas.find(element => element < cedulaEncontrada);                
              }
              arrayCedulas.push(cedulaEncontrada);
-             contadorValor = contadorValor - cedulaEncontrada;
+             troco = parseFloat((troco - cedulaEncontrada).toFixed(2));
            }        
         //Monta objeto somando números de cedulas igualitárias            
         let valorExibido = []
         valorExibido = arrayCedulas.reduce(function( object , item ){  
-        debugger
+        
         if ( !object[item] ) {
             object[item]=1;
         } else {
@@ -87,6 +99,11 @@ function buscaCedulas(valorAPagarConvertido, valorPagoConvertido, cedulasMoedas)
         
         return valorExibido
         
+    }
+
+    function obterCentavos(valor){
+        const valorConvertido = Math.trunc(valor)
+        return parseFloat((valor - Math.floor(valorConvertido)).toFixed(2))
     }
 
 </script>
